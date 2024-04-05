@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String
+  email     String
+  password  String
+  isAdmin   Boolean  @default(false)
+  parcels   Parcel[]
+}
+
+model Parcel {
+  id               Int            @id @default(autoincrement())
+  trackingNumber   String         @unique
+  parcelName       String
+  description      String
+  statusId          Int
+  destination      String
+  locationStock    String         @default("")
+  owner            User           @relation(fields: [ownerId], references: [id])
+  ownerId          Int
+  deliveryHistory  DeliveryUpdate[]
+  status           DeliveryStatus @relation(fields: [statusId], references: [id])
+
+}
+
+model DeliveryStatus {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+
+  parcels     Parcel[]
+  status      DeliveryUpdate[]
+
+}
+
+model DeliveryUpdate {
+  id          Int           @id @default(autoincrement())
+  statusId      Int
+  parcel      Parcel        @relation(fields: [parcelId], references: [id])
+  parcelId    Int
+  updatedAt   DateTime      @default(now())
+
+  status      DeliveryStatus @relation(fields: [statusId], references: [id])
+}
