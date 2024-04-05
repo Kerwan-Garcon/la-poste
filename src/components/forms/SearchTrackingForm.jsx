@@ -49,6 +49,7 @@ function SearchTrackingForm() {
           description={parcel.description}
           destination={parcel.destination}
           status={parcel.status}
+          store={parcel.store}
         />
       ) : (
         <div>Search a parcel and it will show</div>

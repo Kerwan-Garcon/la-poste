@@ -89,7 +89,22 @@ export const updateParcelStock = async (stock, number) => {
       trackingNumber: number,
     },
     data: {
-      locationStock: stock,
+      storeId: stock,
+    },
+  });
+
+  revalidatePath("/dashboard");
+
+  return parcel;
+};
+
+export const updateParcelStore = async (store, number) => {
+  const parcel = await prisma.parcel.update({
+    where: {
+      trackingNumber: number,
+    },
+    data: {
+      storeId: store,
     },
   });
 

@@ -31,10 +31,12 @@ model Parcel {
   statusId          Int
   destination      String
   locationStock    String         @default("")
+  storeId          Int?          
   owner            User           @relation(fields: [ownerId], references: [id])
   ownerId          Int
   deliveryHistory  DeliveryUpdate[]
   status           DeliveryStatus @relation(fields: [statusId], references: [id])
+  store            Store?          @relation(fields: [storeId], references: [id])
 
 }
 
@@ -56,4 +58,11 @@ model DeliveryUpdate {
   updatedAt   DateTime      @default(now())
 
   status      DeliveryStatus @relation(fields: [statusId], references: [id])
+}
+
+model Store {
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String
+  parcels     Parcel[]
 }

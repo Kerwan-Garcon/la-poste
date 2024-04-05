@@ -4,12 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { updateParcelStatus, updateParcelStock } from "@/actions/parcel-action";
 import { useToast } from "../ui/use-toast";
-import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import StoreSelect from "../store/StoreSelect";
 
 // Jamais faire son comp comme ça c'est pour aller vite hein
 function ParcelCard(props) {
-  console.log(props);
   const { toast } = useToast();
   const [stock, setStock] = useState(props.stock || "");
   const changePending = async () => {
@@ -28,8 +27,8 @@ function ParcelCard(props) {
     toast({ title: "Parcel is now Delivered" });
   };
 
-  const updateStock = async () => {
-    const parcel = await updateParcelStock(stock, props.tracking);
+  const updateStock = () => {
+    updateParcelStock(stock, props.tracking);
     toast({ title: "Stock has been modified" });
   };
 
@@ -39,30 +38,36 @@ function ParcelCard(props) {
         <h1>{props.parcelName}</h1>
         <CardDescription>{props.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col">
+      <CardContent className="flex flex-col ">
         <div>
           Destination: <span> {props.destination}</span>
         </div>
         <div>
           Delivery status:<span> {props.status.name}</span>
         </div>
+        {props.store ? (
+          <div>
+            Store: <span> {props.store}</span>
+          </div>
+        ) : (
+          "Votre Colis n'est pas en stock actuellement"
+        )}
       </CardContent>
 
       {props.isGrid ? (
-        <>
-          <div className="flex flex-col">
-            <Label>In Which location will it be stock ?</Label>
+        <div className="">
+          <div className="flex flex-col ">
+            <Label className="mb-1">In Which location will it be stock ?</Label>
             <div className="flex gap-2">
-              <Input
-                className="mb-2"
-                name="stock"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
+              <StoreSelect
+                onChange={setStock}
+                stores={props.stores}
+                currentValue={props.storeId}
               />
               <Button onClick={() => updateStock()}>Change Stock</Button>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-2">
             <Button onClick={() => changePending()} className="w-1/3">
               Pending
             </Button>
@@ -73,7 +78,7 @@ function ParcelCard(props) {
               Delivered
             </Button>
           </div>
-        </>
+        </div>
       ) : null}
     </Card>
   );

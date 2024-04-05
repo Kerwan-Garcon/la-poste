@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { createParcel } from "@/actions/parcel-action";
 import { createAllStatus } from "@/actions/status-action";
+import AddressSearch from "../search/AddressSearch";
 
 function AddParcelForm() {
   const { toast } = useToast();
@@ -28,10 +29,12 @@ function AddParcelForm() {
     formState: { errors },
   } = useForm();
 
+  const [destination, setDestination] = useState();
+
   const onSubmit = async (data) => {
     const parcel = await createParcel(
       data.parcelName,
-      data.destination,
+      destination,
       data.description
     );
     if (parcel)
@@ -66,10 +69,11 @@ function AddParcelForm() {
           />
 
           <Label>Destination</Label>
-          <Input
+          <AddressSearch value={destination} setValue={setDestination} />
+          {/* <Input
             placeholder="Destination"
             {...register("destination", { required: true })}
-          />
+          /> */}
 
           <Label>Description</Label>
           <Textarea
